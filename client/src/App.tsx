@@ -1,8 +1,11 @@
 
 import "./App.css";
+import SignIn from "./pages/SignIn";
 
 function App() {
-  return <></>;
+  return <main className="h-screen ">
+    <SignIn/>
+  </main>;
 }
 
 export default App;
