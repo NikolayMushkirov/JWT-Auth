@@ -1,9 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
+import { Inputs } from "../types/types";
 
-type Inputs = {
-  username: string;
-  password: string;
-};
 
 function SignIn() {
   const {

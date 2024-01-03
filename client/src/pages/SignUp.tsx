@@ -1,8 +1,12 @@
 import { useForm, SubmitHandler } from "react-hook-form";
+import { Inputs } from "../types/types";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
-type Inputs = {
-  username: string;
-  password: string;
+const defaultValues = {
+  userName: "",
+  password: "",
+  role: 1,
 };
 
 const rolesList = [
@@ -21,17 +25,21 @@ const rolesList = [
 ];
 
 function SignUp() {
+  const { handleSignUp } = useContext(AuthContext);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  } = useForm<Inputs>({ defaultValues });
+
+  // const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
   return (
     <div className="w-full h-full  flex flex-col justify-center items-center gap-6">
       <h2 className="text-3xl">Создать аккаунт</h2>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handleSignUp)}
         className="w-1/4 flex flex-col items-center gap-2 "
       >
         <input
@@ -65,7 +73,10 @@ function SignUp() {
             </option>
           ))}
         </select>
-        <button className="w-1/2 py-2 bg-sky-600 text-white text-lg rounded-2xl">
+        <button
+          type="submit"
+          className="w-1/2 py-2 bg-sky-600 text-white text-lg rounded-2xl"
+        >
           Создать аккаунт
         </button>
       </form>
