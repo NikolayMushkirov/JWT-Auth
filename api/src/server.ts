@@ -19,7 +19,7 @@ app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
 
 app.use(
   Fingerprint({
-    parameters: [Fingerprint.userAgent, Fingerprint.acceptHeaders],
+    parameters: [Fingerprint.useragent, Fingerprint.acceptHeaders],
   })
 );
 
