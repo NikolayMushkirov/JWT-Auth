@@ -1,45 +1,58 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import { Inputs } from "../types/types";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
+import { signInSchema } from "../validators/validationSchema";
+
+import InputFIeld from "../components/InputFIeld";
+import Button from "../components/Button";
+
+import { AuthContext } from "../contexts/AuthContext";
+
+import { SignInInputsData } from "../types/types";
 
 function SignIn() {
+  const { handleSignIn } = useContext(AuthContext);
+
+  const defaultValues = {
+    userName: "",
+    password: "",
+  };
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+    formState: { errors, isSubmitting },
+  } = useForm<SignInInputsData>({
+    defaultValues,
+    resolver: yupResolver(signInSchema),
+  });
+
   return (
     <div className="w-full h-full  flex flex-col justify-center items-center gap-6">
       <h2 className="text-3xl">Войти в аккаунт</h2>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handleSignIn)}
         className="w-1/4 flex flex-col items-center gap-2 "
       >
-        <input
-          {...register("username", {
-            required: "Это поле обязательно к заполнению",
-          })}
+        <InputFIeld
+          name="userName"
           placeholder="Имя пользователя"
-          className="w-full py-2 text-center text-lg border-slate-700 border-spacing-2  border-2 rounded-2xl"
+          register={register}
+          error={Boolean(errors.userName)}
+          errorMessage={errors.userName?.message}
         />
-        <div className="">
-          {errors.username && <span>{errors.username.message}</span>}
-        </div>
-        <input
-          {...register("password", {
-            required: "Это поле обязательно к заполнению",
-
-          })}
+        <InputFIeld
+          name="password"
           placeholder="Пароль"
-          className="w-full py-2 text-center text-lg border-slate-700 border-spacing-2  border-2 rounded-2xl"
+          register={register}
+          error={Boolean(errors.password)}
+          errorMessage={errors.password?.message}
         />
-        <div className="">
-          {errors.password && <span>{errors.password.message}</span>}
-        </div>
-        <button className="w-1/2 py-2 bg-sky-600 text-white text-lg rounded-2xl">
+
+        <Button disabled={isSubmitting} type="submit">
           Войти
-        </button>
+        </Button>
       </form>
     </div>
   );

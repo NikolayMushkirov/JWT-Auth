@@ -1,7 +1,14 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import { Inputs } from "../types/types";
 import { useContext } from "react";
+import { useForm, UseFormRegister, FieldValues } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
 import { AuthContext } from "../contexts/AuthContext";
+
+import { signUpSchema } from "../validators/validationSchema";
+
+import InputFIeld from "../components/InputFIeld";
+import Button from "../components/Button";
+import Select from "../components/Select";
 
 const defaultValues = {
   userName: "",
@@ -24,16 +31,16 @@ const rolesList = [
   },
 ];
 
+export type Register = UseFormRegister<FieldValues>;
+
 function SignUp() {
   const { handleSignUp } = useContext(AuthContext);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>({ defaultValues });
-
-  // const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+    formState: { errors, isSubmitting },
+  } = useForm({ defaultValues, resolver: yupResolver(signUpSchema) });
 
   return (
     <div className="w-full h-full  flex flex-col justify-center items-center gap-6">
@@ -42,43 +49,24 @@ function SignUp() {
         onSubmit={handleSubmit(handleSignUp)}
         className="w-1/4 flex flex-col items-center gap-2 "
       >
-        <input
-          {...register("username", {
-            required: "Это поле обязательно к заполнению",
-          })}
+        <InputFIeld
+          name="userName"
           placeholder="Имя пользователя"
-          className="w-full py-2 text-center text-lg border-slate-700 border-spacing-2  border-2 rounded-2xl"
+          register={register}
+          error={Boolean(errors.userName)}
+          errorMessage={errors.userName?.message}
         />
-        <div className="">
-          {errors.username && <span>{errors.username.message}</span>}
-        </div>
-        <input
-          {...register("password", {
-            required: "Это поле обязательно к заполнению",
-            minLength: {
-              value: 3,
-              message: "пароль должен содержать минимум 3 символа",
-            },
-          })}
+        <InputFIeld
+          name="password"
           placeholder="Пароль"
-          className="w-full py-2 text-center text-lg border-slate-700 border-spacing-2  border-2 rounded-2xl"
+          register={register}
+          error={Boolean(errors.password)}
+          errorMessage={errors.password?.message}
         />
-        <div className="">
-          {errors.password && <span>{errors.password.message}</span>}
-        </div>
-        <select className="w-full  py-2 border-slate-700 border-spacing-2  border-2 rounded-xl text-center text-lg bg-transparent">
-          {rolesList.map(({ id, role }) => (
-            <option key={id} value={id}>
-              {role}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="w-1/2 py-2 bg-sky-600 text-white text-lg rounded-2xl"
-        >
+        <Select rolesList={rolesList} />
+        <Button type="submit" disabled={isSubmitting}>
           Создать аккаунт
-        </button>
+        </Button>
       </form>
     </div>
   );
