@@ -32,7 +32,7 @@ function SignIn() {
     <div className="w-full h-full  flex flex-col justify-center items-center gap-6">
       <h2 className="text-3xl">Войти в аккаунт</h2>
       <form
-        onSubmit={handleSubmit(handleSignIn)}
+        onSubmit={handleSubmit(handleSignIn ?? (() => {}))}
         className="w-1/4 flex flex-col items-center gap-2 "
       >
         <InputFIeld
