@@ -1,5 +1,10 @@
 import { useContext } from "react";
-import { useForm, UseFormRegister, FieldValues } from "react-hook-form";
+import {
+  useForm,
+  UseFormRegister,
+  FieldValues,
+  Controller,
+} from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { AuthContext } from "../contexts/AuthContext";
@@ -39,6 +44,7 @@ function SignUp() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues, resolver: yupResolver(signUpSchema) });
 
@@ -63,7 +69,13 @@ function SignUp() {
           error={Boolean(errors.password)}
           errorMessage={errors.password?.message}
         />
-        <Select rolesList={rolesList} />
+        <Controller
+          control={control}
+          name="role"
+          render={({ field: { onChange, value } }) => (
+            <Select onChange={onChange} value={value} rolesList={rolesList} />
+          )}
+        />
         <Button type="submit" disabled={isSubmitting}>
           Создать аккаунт
         </Button>
