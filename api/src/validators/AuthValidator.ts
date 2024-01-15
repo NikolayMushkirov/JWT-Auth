@@ -1,7 +1,29 @@
+import { Request, Response, NextFunction } from "express";
 import validateRequest from "../utils/ValidateRequest.js";
 import * as Yup from "yup";
 
-export const signInSchema = Yup.object({
+import { ObjectSchema } from "yup";
+
+export type SignInSchema = {
+  body: {
+    userName: string;
+    password: string;
+  };
+};
+export type SignUpSchema = {
+  body: {
+    userName: string;
+    password: string;
+    role: number;
+  };
+};
+export type LogoutSchema = {
+  cookies: {
+   refreshToken : string;
+  };
+};
+
+export const signInSchema: ObjectSchema<SignInSchema> = Yup.object({
   body: Yup.object({
     userName: Yup.string()
       .required("Это обязательное поле!")
@@ -13,7 +35,7 @@ export const signInSchema = Yup.object({
   }),
 });
 
-export const signUpSchema = Yup.object({
+export const signUpSchema: ObjectSchema<SignUpSchema> = Yup.object({
   body: Yup.object({
     userName: Yup.string()
       .required("Это обязательное поле!")
@@ -30,26 +52,26 @@ export const signUpSchema = Yup.object({
   }),
 });
 
-export const logoutSchema = Yup.object({
+export const logoutSchema : ObjectSchema<LogoutSchema> = Yup.object({
   cookies: Yup.object({
     refreshToken: Yup.string().required("Это обязательное поле!"),
   }),
 });
 
 export class AuthValidator {
-  static async signIn(req, res, next) {
+  static async signIn(req: Request, res: Response, next: NextFunction) {
     return validateRequest(req, res, next, signInSchema);
   }
 
-  static async signUp(req, res, next) {
+  static async signUp(req: Request, res: Response, next: NextFunction) {
     return validateRequest(req, res, next, signUpSchema);
   }
 
-  static async logOut(req, res, next) {
+  static async logOut(req: Request, res: Response, next: NextFunction) {
     return validateRequest(req, res, next, logoutSchema);
   }
 
-  static async refresh(req, res, next) {
+  static async refresh(req: Request, res: Response, next: NextFunction) {
     return validateRequest(req, res, next);
   }
 }

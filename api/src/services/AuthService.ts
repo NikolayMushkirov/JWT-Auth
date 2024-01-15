@@ -3,11 +3,24 @@ import bcrypt from "bcryptjs";
 import { UserRepository } from "../repositories/UserRepository.js";
 import { Conflict } from "../utils/Errors.js";
 import { TokenService } from "./TokenService.js";
+import { RefreshSessionRepository } from "../repositories/RefreshSessionRepository.js";
+import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
+import { ClientData } from "../types/types.js";
+import { FingerprintResult } from "express-fingerprint";
+
+type AuthServiceData = ClientData & {
+  fingerprint?: FingerprintResult;
+};
 
 export class AuthService {
-  static async signIn({ userName, password, fingerprint }) {}
-  static async signUp({ userName, password, fingerprint, role }) {
-    const userData = await UserRepository.getUserData(userName);
+  static async signIn({ userName, password, fingerprint }: AuthServiceData) {}
+  static async signUp({
+    userName,
+    password,
+    fingerprint,
+    role,
+  }: AuthServiceData) {
+    const userData: string = await UserRepository.getUserData(userName);
     if (userData) {
       throw new Conflict("Пользователь с таким именем уже существует");
     }
@@ -26,5 +39,11 @@ export class AuthService {
       refreshToken,
       fingerprint,
     });
+
+    return {
+      accessToken,
+      refreshToken,
+      accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+    };
   }
 }

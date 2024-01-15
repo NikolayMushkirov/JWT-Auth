@@ -1,6 +1,6 @@
 import pg from "pg";
 var pool = new pg.Pool({
-    user: "postgress",
+    user: "postgres",
     password: "root",
     host: "localhost",
     port: 5432,

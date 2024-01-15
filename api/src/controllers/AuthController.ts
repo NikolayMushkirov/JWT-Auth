@@ -1,27 +1,36 @@
+import { COOKIE_SETTINGS } from "../constants.js";
 import { AuthService } from "../services/AuthService.js";
+import { ClientData } from "../types/types.js";
 import { ErrorsUtils } from "../utils/Errors.js";
 
-class AuthController {
-  static async signIn(req, res) {
+import { Response, Request } from "express";
+
+export class AuthController {
+  static async signIn(req: Request, res: Response) {
     const { fingerprint } = req;
     try {
       return res.sendStatus(200);
     } catch (error) {
-      return ErrorsUtils.catchError(res, error);
+      if (error) return ErrorsUtils.catchError(res, error);
     }
   }
-  static async signUp(req, res) {
-    const { userName, password, role } = req.body;
+  static async signUp(req: Request, res: Response) {
+    const { userName, password, role } = req.body as ClientData;
     const { fingerprint } = req;
+
     try {
-      await AuthService.signUp({ userName, password, role });
-      return res.sendStatus(200);
+      const { accessToken, refreshToken, accessTokenExpiration } =
+        await AuthService.signUp({ userName, password, role, fingerprint });
+
+      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+
+      return res.sendStatus(200).json({ accessToken, accessTokenExpiration });
     } catch (error) {
       return ErrorsUtils.catchError(res, error);
     }
   }
 
-  static async logOut(req, res) {
+  static async logOut(req: Request, res: Response) {
     const { fingerprint } = req;
     try {
       return res.sendStatus(200);
@@ -30,7 +39,7 @@ class AuthController {
     }
   }
 
-  static async refresh(req, res) {
+  static async refresh(req: Request, res: Response) {
     const { fingerprint } = req;
     try {
       return res.sendStatus(200);

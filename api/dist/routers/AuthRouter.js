@@ -1,4 +1,2 @@
 import { Router } from "express";
-
-const router = Router()
-
+var router = Router();

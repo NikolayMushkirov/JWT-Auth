@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Fingerprint from "express-fingerprint";
-import AuthRootRouter from "./routers/Auth.js";
-import TokenService from "./services/Token.js";
+import AuthRootRouter from "./routers/Router.js";
+import TokenService from "./services/Token";
 import cookieParser from "cookie-parser";
 import { connect } from "http2";
 
