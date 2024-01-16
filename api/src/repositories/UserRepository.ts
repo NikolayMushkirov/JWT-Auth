@@ -1,5 +1,5 @@
 import pool from "../db.js";
-import {  ClientHashedData } from "../types/types.js";
+import { ClientHashedData } from "../types/types.js";
 
 export class UserRepository {
   static async createUser({

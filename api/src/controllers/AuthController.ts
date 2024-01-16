@@ -7,16 +7,35 @@ import { Response, Request } from "express";
 
 export class AuthController {
   static async signIn(req: Request, res: Response) {
+    const { userName, password } = req.body;
     const { fingerprint } = req;
+
+    if (!fingerprint) {
+      return res.status(400).json({ message: "Fingerprint not provided" });
+    }
+
     try {
-      return res.sendStatus(200);
+      const { accessToken, refreshToken, accessTokenExpiration } =
+        await AuthService.signIn({
+          userName,
+          password,
+          fingerprint,
+        });
+      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+      return res.sendStatus(200).json({ accessToken, accessTokenExpiration });
     } catch (error) {
-      if (error) return ErrorsUtils.catchError(res, error);
+      if (error instanceof Error) {
+        return ErrorsUtils.catchError(res, error);
+      }
     }
   }
   static async signUp(req: Request, res: Response) {
     const { userName, password, role } = req.body as ClientData;
     const { fingerprint } = req;
+
+    if (!fingerprint) {
+      return res.status(400).json({ message: "Fingerprint not provided" });
+    }
 
     try {
       const { accessToken, refreshToken, accessTokenExpiration } =
@@ -26,7 +45,9 @@ export class AuthController {
 
       return res.sendStatus(200).json({ accessToken, accessTokenExpiration });
     } catch (error) {
-      return ErrorsUtils.catchError(res, error);
+      if (error instanceof Error) {
+        return ErrorsUtils.catchError(res, error);
+      }
     }
   }
 
@@ -34,8 +55,10 @@ export class AuthController {
     const { fingerprint } = req;
     try {
       return res.sendStatus(200);
-    } catch (err) {
-      return ErrorsUtils.catchError(res, err);
+    } catch (error) {
+      if (error instanceof Error) {
+        return ErrorsUtils.catchError(res, error);
+      }
     }
   }
 
@@ -43,8 +66,10 @@ export class AuthController {
     const { fingerprint } = req;
     try {
       return res.sendStatus(200);
-    } catch (err) {
-      return ErrorsUtils.catchError(res, err);
+    } catch (error) {
+      if (error instanceof Error) {
+        return ErrorsUtils.catchError(res, error);
+      }
     }
   }
 }

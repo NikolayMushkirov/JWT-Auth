@@ -1,4 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
+
+import { NextFunction } from "express";
+
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -9,11 +12,11 @@ export class TokenService {
       expiresIn: "30m",
     });
   }
-  static async generateRefreshToken(payload : string | JwtPayload) {
+  static async generateRefreshToken(payload: string | JwtPayload) {
     return await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "15d",
     });
   }
 
-  static async checkAccess(req, _, next) {}
+  static async checkAccess(req: Request, _: undefined, next: NextFunction) {}
 }

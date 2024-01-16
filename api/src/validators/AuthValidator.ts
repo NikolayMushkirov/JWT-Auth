@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import validateRequest from "../utils/ValidateRequest.js";
 import * as Yup from "yup";
-
 import { ObjectSchema } from "yup";
+
+import validateRequest from "../utils/ValidateRequest.js";
 
 export type SignInSchema = {
   body: {

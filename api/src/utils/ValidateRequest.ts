@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ObjectSchema } from "yup";
+import { ObjectSchema, ValidationError } from "yup";
 
 import { ErrorsUtils, Unprocessable } from "./Errors.js";
 import {
@@ -19,10 +19,13 @@ export default async (
       await schema.validate(req);
     }
     return next();
-  } catch ({ path, errors }) {
-    return ErrorsUtils.catchError(
-      res,
-      new Unprocessable(JSON.stringify({ path, errors }))
-    );
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      const { path, errors } = error;
+      return ErrorsUtils.catchError(
+        res,
+        new Unprocessable(JSON.stringify({ path, errors }))
+      );
+    }
   }
 };
