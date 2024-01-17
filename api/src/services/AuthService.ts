@@ -87,4 +87,8 @@ export class AuthService {
       accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
     };
   }
+
+  static async logOut(refreshToken: string) {
+    await RefreshSessionRepository.deleteRefreshSession(refreshToken);
+  }
 }

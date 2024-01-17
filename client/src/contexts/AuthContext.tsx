@@ -15,6 +15,7 @@ type AuthContextValue = {
   handleSignUp: (data: SignUpInputsData) => void;
   handleSignIn: (data: SignInInputsData) => void;
   handleFetchProtected: () => void;
+  handleLogout: () => void;
 };
 
 export const AuthClient = axios.create({
@@ -44,6 +45,7 @@ ResourceClient.interceptors.request.use(
 export const AuthContext = createContext<AuthContextValue>({});
 function AuthProvider({ children }: Props) {
   const [data, setData] = useState();
+  const [isUserLogged, setIsUserLogged] = useState(false);
 
   const handleFetchProtected = () => {
     ResourceClient("/protected")
@@ -71,6 +73,16 @@ function AuthProvider({ children }: Props) {
       .catch(showErrorMessage);
   };
 
+  const handleLogout = () => {
+    AuthClient.post("/logout")
+      .then(() => {
+        setIsUserLogged(false);
+        inMemoryJWT.deleteToken();
+        setData();
+      })
+      .catch((error) => showErrorMessage(error));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -78,6 +90,7 @@ function AuthProvider({ children }: Props) {
         handleSignUp,
         handleSignIn,
         handleFetchProtected,
+        handleLogout,
       }}
     >
       {children}

@@ -51,8 +51,12 @@ export class AuthController {
   }
 
   static async logOut(req: Request, res: Response) {
+    const refreshToken = req.cookies.refreshToken;
     const { fingerprint } = req;
+
     try {
+      await AuthService.logOut(refreshToken);
+      res.clearCookie("refreshToken");
       return res.sendStatus(200);
     } catch (error) {
       if (error instanceof WebError) {
