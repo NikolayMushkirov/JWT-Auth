@@ -2,8 +2,9 @@ import React from "react";
 
 type Props = {
   children: React.ReactNode;
-  disabled: boolean;
-  type: "submit";
+  disabled?: boolean;
+  type?: "submit";
+  onClick?: () => void;
 };
 
 function Button({ children, ...rest }: Props) {

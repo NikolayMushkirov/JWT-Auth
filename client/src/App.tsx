@@ -4,10 +4,12 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NavigationBar from "./components/NavigationBar";
 import Demo from "./pages/Demo";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   return (
     <main className="h-dvh py-8 flex flex-col">
+      <SnackbarProvider/>
       <BrowserRouter>
         <NavigationBar />
         <Routes>

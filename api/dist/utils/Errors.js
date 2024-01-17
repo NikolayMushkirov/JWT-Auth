@@ -30,6 +30,7 @@ var WebError = /** @class */ (function () {
     }
     return WebError;
 }());
+export { WebError };
 var Unprocessable = /** @class */ (function (_super) {
     __extends(Unprocessable, _super);
     function Unprocessable(error) {

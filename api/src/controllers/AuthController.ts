@@ -1,7 +1,7 @@
 import { COOKIE_SETTINGS } from "../constants.js";
 import { AuthService } from "../services/AuthService.js";
 import { ClientData } from "../types/types.js";
-import { ErrorsUtils } from "../utils/Errors.js";
+import { ErrorsUtils, WebError } from "../utils/Errors.js";
 
 import { Response, Request } from "express";
 
@@ -13,7 +13,6 @@ export class AuthController {
     if (!fingerprint) {
       return res.status(400).json({ message: "Fingerprint not provided" });
     }
-
     try {
       const { accessToken, refreshToken, accessTokenExpiration } =
         await AuthService.signIn({
@@ -22,11 +21,11 @@ export class AuthController {
           fingerprint,
         });
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
-      return res.sendStatus(200).json({ accessToken, accessTokenExpiration });
+
+      return res.status(200).json({ accessToken, accessTokenExpiration });
     } catch (error) {
-      if (error instanceof Error) {
-        return ErrorsUtils.catchError(res, error);
-      }
+      if (error instanceof WebError) return ErrorsUtils.catchError(res, error);
+      return console.log(error);
     }
   }
   static async signUp(req: Request, res: Response) {
@@ -43,9 +42,9 @@ export class AuthController {
 
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
-      return res.sendStatus(200).json({ accessToken, accessTokenExpiration });
+      return res.status(200).json({ accessToken, accessTokenExpiration });
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof WebError) {
         return ErrorsUtils.catchError(res, error);
       }
     }
@@ -56,7 +55,7 @@ export class AuthController {
     try {
       return res.sendStatus(200);
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof WebError) {
         return ErrorsUtils.catchError(res, error);
       }
     }
@@ -67,7 +66,7 @@ export class AuthController {
     try {
       return res.sendStatus(200);
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof WebError) {
         return ErrorsUtils.catchError(res, error);
       }
     }

@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { Forbidden, Unauthorized } from "../utils/Errors.js";
 dotenv.config();
 var TokenService = /** @class */ (function () {
     function TokenService() {
@@ -64,10 +65,57 @@ var TokenService = /** @class */ (function () {
             });
         });
     };
+    TokenService.verifyAccessToken = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    TokenService.verifyRefreshToken = function (refreshToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
     TokenService.checkAccess = function (req, _, next) {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2 /*return*/];
-        }); });
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var authHeader, token, _b, error_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        authHeader = req.headers.authorization;
+                        token = (_a = authHeader === null || authHeader === void 0 ? void 0 : authHeader.split(" ")) === null || _a === void 0 ? void 0 : _a[1];
+                        if (!token) {
+                            return [2 /*return*/, next(new Unauthorized("Unauthorized"))];
+                        }
+                        _c.label = 1;
+                    case 1:
+                        _c.trys.push([1, 3, , 4]);
+                        _b = req;
+                        return [4 /*yield*/, TokenService.verifyAccessToken(token)];
+                    case 2:
+                        _b.user = _c.sent();
+                        console.log(req.user);
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_1 = _c.sent();
+                        console.log(error_1);
+                        return [2 /*return*/, next(new Forbidden("error Forbidden"))];
+                    case 4:
+                        next();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return TokenService;
 }());

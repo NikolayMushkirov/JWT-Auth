@@ -6,7 +6,7 @@ declare global {
       ACCESS_TOKEN_SECRET: string;
       REFRESH_TOKEN_SECRET: string;
       CLIENT_URL: string;
-      PORT: number;
+      PORT:  string | undefined;
       ENV: "test" | "dev" | "prod";
     }
   }

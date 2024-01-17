@@ -36,18 +36,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import bcrypt from "bcryptjs";
 import { UserRepository } from "../repositories/UserRepository.js";
-import { Conflict } from "../utils/Errors.js";
-import { TokenService } from "./TokenService.js";
 import { RefreshSessionRepository } from "../repositories/RefreshSessionRepository.js";
+import { TokenService } from "./TokenService.js";
+import { Conflict, Forbidden, NotFound } from "../utils/Errors.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
     AuthService.signIn = function (_a) {
         var userName = _a.userName, password = _a.password, fingerprint = _a.fingerprint;
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_b) {
-            return [2 /*return*/];
-        }); });
+        return __awaiter(this, void 0, void 0, function () {
+            var userData, isPasswordValid, payload, accessToken, refreshToken;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, UserRepository.getUserData(userName)];
+                    case 1:
+                        userData = _b.sent();
+                        if (!userData) {
+                            throw new NotFound("Пользователь не найден");
+                        }
+                        isPasswordValid = bcrypt.compareSync(password, userData.password);
+                        if (!isPasswordValid) {
+                            throw new Forbidden("Неверное имя или пароль");
+                        }
+                        payload = { role: userData.role, id: userData.id, userName: userName };
+                        return [4 /*yield*/, TokenService.generateAccessToken(payload)];
+                    case 2:
+                        accessToken = _b.sent();
+                        return [4 /*yield*/, TokenService.generateRefreshToken(payload)];
+                    case 3:
+                        refreshToken = _b.sent();
+                        return [4 /*yield*/, RefreshSessionRepository.createRefreshSession({
+                                id: userData.id,
+                                refreshToken: refreshToken,
+                                fingerprint: fingerprint,
+                            })];
+                    case 4:
+                        _b.sent();
+                        return [2 /*return*/, {
+                                accessToken: accessToken,
+                                refreshToken: refreshToken,
+                                accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+                            }];
+                }
+            });
+        });
     };
     AuthService.signUp = function (_a) {
         var userName = _a.userName, password = _a.password, fingerprint = _a.fingerprint, role = _a.role;

@@ -34,45 +34,70 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+import { COOKIE_SETTINGS } from "../constants.js";
 import { AuthService } from "../services/AuthService.js";
-import { ErrorsUtils } from "../utils/Errors.js";
+import { ErrorsUtils, WebError } from "../utils/Errors.js";
 var AuthController = /** @class */ (function () {
     function AuthController() {
     }
     AuthController.signIn = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var fingerprint;
-            return __generator(this, function (_a) {
-                fingerprint = req.fingerprint;
-                try {
-                    return [2 /*return*/, res.sendStatus(200)];
+            var _a, userName, password, fingerprint, _b, accessToken, refreshToken, accessTokenExpiration, error_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = req.body, userName = _a.userName, password = _a.password;
+                        fingerprint = req.fingerprint;
+                        if (!fingerprint) {
+                            return [2 /*return*/, res.status(400).json({ message: "Fingerprint not provided" })];
+                        }
+                        _c.label = 1;
+                    case 1:
+                        _c.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, AuthService.signIn({
+                                userName: userName,
+                                password: password,
+                                fingerprint: fingerprint,
+                            })];
+                    case 2:
+                        _b = _c.sent(), accessToken = _b.accessToken, refreshToken = _b.refreshToken, accessTokenExpiration = _b.accessTokenExpiration;
+                        res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+                        return [2 /*return*/, res.status(200).json({ accessToken: accessToken, accessTokenExpiration: accessTokenExpiration })];
+                    case 3:
+                        error_1 = _c.sent();
+                        if (error_1 instanceof WebError)
+                            return [2 /*return*/, ErrorsUtils.catchError(res, error_1)];
+                        return [2 /*return*/, console.log(error_1)];
+                    case 4: return [2 /*return*/];
                 }
-                catch (error) {
-                    if (error)
-                        return [2 /*return*/, ErrorsUtils.catchError(res, error)];
-                }
-                return [2 /*return*/];
             });
         });
     };
     AuthController.signUp = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, userName, password, role, fingerprint, error_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, userName, password, role, fingerprint, _b, accessToken, refreshToken, accessTokenExpiration, error_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         _a = req.body, userName = _a.userName, password = _a.password, role = _a.role;
                         fingerprint = req.fingerprint;
-                        _b.label = 1;
+                        if (!fingerprint) {
+                            return [2 /*return*/, res.status(400).json({ message: "Fingerprint not provided" })];
+                        }
+                        _c.label = 1;
                     case 1:
-                        _b.trys.push([1, 3, , 4]);
+                        _c.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, AuthService.signUp({ userName: userName, password: password, role: role, fingerprint: fingerprint })];
                     case 2:
-                        _b.sent();
-                        return [2 /*return*/, res.sendStatus(200)];
+                        _b = _c.sent(), accessToken = _b.accessToken, refreshToken = _b.refreshToken, accessTokenExpiration = _b.accessTokenExpiration;
+                        res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+                        return [2 /*return*/, res.status(200).json({ accessToken: accessToken, accessTokenExpiration: accessTokenExpiration })];
                     case 3:
-                        error_1 = _b.sent();
-                        return [2 /*return*/, ErrorsUtils.catchError(res, error_1)];
+                        error_2 = _c.sent();
+                        if (error_2 instanceof WebError) {
+                            return [2 /*return*/, ErrorsUtils.catchError(res, error_2)];
+                        }
+                        return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
             });
@@ -86,8 +111,10 @@ var AuthController = /** @class */ (function () {
                 try {
                     return [2 /*return*/, res.sendStatus(200)];
                 }
-                catch (err) {
-                    return [2 /*return*/, ErrorsUtils.catchError(res, err)];
+                catch (error) {
+                    if (error instanceof WebError) {
+                        return [2 /*return*/, ErrorsUtils.catchError(res, error)];
+                    }
                 }
                 return [2 /*return*/];
             });
@@ -101,8 +128,10 @@ var AuthController = /** @class */ (function () {
                 try {
                     return [2 /*return*/, res.sendStatus(200)];
                 }
-                catch (err) {
-                    return [2 /*return*/, ErrorsUtils.catchError(res, err)];
+                catch (error) {
+                    if (error instanceof WebError) {
+                        return [2 /*return*/, ErrorsUtils.catchError(res, error)];
+                    }
                 }
                 return [2 /*return*/];
             });

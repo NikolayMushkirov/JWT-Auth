@@ -34,23 +34,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+import { ValidationError } from "yup";
 import { ErrorsUtils, Unprocessable } from "./Errors.js";
 export default (function (req, res, next, schema) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, path, errors;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var error_1, path, errors;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
+                _a.trys.push([0, 3, , 4]);
                 if (!schema) return [3 /*break*/, 2];
                 return [4 /*yield*/, schema.validate(req)];
             case 1:
-                _b.sent();
-                _b.label = 2;
+                _a.sent();
+                _a.label = 2;
             case 2: return [2 /*return*/, next()];
             case 3:
-                _a = _b.sent();
-                path = _a.path, errors = _a.errors;
-                return [2 /*return*/, ErrorsUtils.catchError(res, new Unprocessable(JSON.stringify({ path: path, errors: errors })))];
+                error_1 = _a.sent();
+                if (error_1 instanceof ValidationError) {
+                    path = error_1.path, errors = error_1.errors;
+                    return [2 /*return*/, ErrorsUtils.catchError(res, new Unprocessable(JSON.stringify({ path: path, errors: errors })))];
+                }
+                return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });

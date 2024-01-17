@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import Fingerprint from "express-fingerprint";
-import AuthRootRouter from "./routers/Router.js";
-import TokenService from "./services/Token";
 import cookieParser from "cookie-parser";
+import Fingerprint from "express-fingerprint";
 import { connect } from "http2";
+
+import AuthRootRouter from "./routers/Router.js";
+import { TokenService } from "./services/TokenService.js";
 
 dotenv.config();
 
@@ -24,6 +25,10 @@ app.use(
 );
 
 app.use("/auth", AuthRootRouter);
+
+app.get("/resource/protected", TokenService.checkAccess, (_, res) => {
+  res.status(200).json("Добро пожаловать!" + Date.now());
+});
 
 app.listen(PORT, () => {
   console.log("Сервер успешно запущен");

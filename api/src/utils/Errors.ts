@@ -7,7 +7,7 @@ export class ErrorsUtils {
   }
 }
 
-class WebError {
+export class WebError {
   status: number;
   error: string;
   constructor(status: number, error: string) {
