@@ -1,19 +1,20 @@
-import { ReactNode, createContext, useState } from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 
 import axios from "axios";
 
 import config from "../config";
 
-import { SignInInputsData, SignUpInputsData } from "../types/types";
 import inMemoryJWT from "../services/inMemoryJWT";
 import showErrorMessage from "../utils/showErrorMessage";
+import { SignInData, SignUpData } from "../types/types";
 
 type Props = { children: ReactNode };
 
-type AuthContextValue = {
-  data: SignInInputsData | SignUpInputsData | undefined;
-  handleSignUp: (data: SignUpInputsData) => void;
-  handleSignIn: (data: SignInInputsData) => void;
+export type AuthContext = {
+  data?: string | null;
+  isUserLogged: boolean;
+  handleSignUp: (inputData: SignUpData) => void;
+  handleSignIn: (inputData: SignInData) => void;
   handleFetchProtected: () => void;
   handleLogout: () => void;
 };
@@ -42,10 +43,11 @@ ResourceClient.interceptors.request.use(
   }
 );
 
-export const AuthContext = createContext<AuthContextValue>({});
+export const AuthContext = createContext<AuthContext | null>(null);
 function AuthProvider({ children }: Props) {
-  const [data, setData] = useState();
+  const [data, setData] = useState<null | string>("");
   const [isUserLogged, setIsUserLogged] = useState(false);
+  const [isAppReady, setIsAppReady] = useState(false);
 
   const handleFetchProtected = () => {
     ResourceClient("/protected")
@@ -55,8 +57,8 @@ function AuthProvider({ children }: Props) {
       .catch(showErrorMessage);
   };
 
-  const handleSignUp = (data: SignUpInputsData) => {
-    AuthClient.post("/sign-up", data)
+  const handleSignUp = (inputData: SignUpData) => {
+    AuthClient.post("/sign-up", inputData)
       .then((res) => {
         const { accessToken, accessTokenExpiration } = res.data;
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
@@ -64,8 +66,8 @@ function AuthProvider({ children }: Props) {
       .catch(showErrorMessage);
   };
 
-  const handleSignIn = (data: SignInInputsData) => {
-    AuthClient.post("/sign-in", data)
+  const handleSignIn = (inputData: SignInData) => {
+    AuthClient.post("/sign-in", inputData)
       .then((res) => {
         const { accessToken, accessTokenExpiration } = res.data;
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
@@ -78,10 +80,39 @@ function AuthProvider({ children }: Props) {
       .then(() => {
         setIsUserLogged(false);
         inMemoryJWT.deleteToken();
-        setData();
+        setData(null);
       })
       .catch((error) => showErrorMessage(error));
   };
+
+  useEffect(() => {
+    AuthClient.post("/refresh")
+      .then((res) => {
+        const { accessToken, accessTokenExpiration } = res.data;
+        inMemoryJWT.setToken(accessToken, accessTokenExpiration);
+        setIsAppReady(true);
+        setIsUserLogged(true);
+      })
+      .catch(() => {
+        setIsAppReady(true);
+        setIsUserLogged(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    const handlePersistedLogOut = (event: StorageEvent) => {
+      if (event.key === config.LOGOUT_STORAGE_KEY) {
+        inMemoryJWT.deleteToken();
+        setIsUserLogged(false);
+      }
+    };
+
+    window.addEventListener("storage", handlePersistedLogOut);
+
+    return () => {
+      window.removeEventListener("storage", handlePersistedLogOut);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -91,9 +122,10 @@ function AuthProvider({ children }: Props) {
         handleSignIn,
         handleFetchProtected,
         handleLogout,
+        isUserLogged,
       }}
     >
-      {children}
+      {isAppReady && children}
     </AuthContext.Provider>
   );
 }

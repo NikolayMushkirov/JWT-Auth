@@ -105,35 +105,58 @@ var AuthController = /** @class */ (function () {
     };
     AuthController.logOut = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var fingerprint;
+            var refreshToken, fingerprint, error_3;
             return __generator(this, function (_a) {
-                fingerprint = req.fingerprint;
-                try {
-                    return [2 /*return*/, res.sendStatus(200)];
+                switch (_a.label) {
+                    case 0:
+                        refreshToken = req.cookies.refreshToken;
+                        fingerprint = req.fingerprint;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, AuthService.logOut(refreshToken)];
+                    case 2:
+                        _a.sent();
+                        res.clearCookie("refreshToken");
+                        return [2 /*return*/, res.sendStatus(200)];
+                    case 3:
+                        error_3 = _a.sent();
+                        if (error_3 instanceof WebError) {
+                            return [2 /*return*/, ErrorsUtils.catchError(res, error_3)];
+                        }
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
-                catch (error) {
-                    if (error instanceof WebError) {
-                        return [2 /*return*/, ErrorsUtils.catchError(res, error)];
-                    }
-                }
-                return [2 /*return*/];
             });
         });
     };
     AuthController.refresh = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var fingerprint;
-            return __generator(this, function (_a) {
-                fingerprint = req.fingerprint;
-                try {
-                    return [2 /*return*/, res.sendStatus(200)];
+            var fingerprint, currentRefreshToken, _a, accessToken, refreshToken, accessTokenExpiration, error_4;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        fingerprint = req.fingerprint;
+                        currentRefreshToken = req.cookies.refreshToken;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, AuthService.refresh({
+                                currentRefreshToken: currentRefreshToken,
+                                fingerprint: fingerprint,
+                            })];
+                    case 2:
+                        _a = _b.sent(), accessToken = _a.accessToken, refreshToken = _a.refreshToken, accessTokenExpiration = _a.accessTokenExpiration;
+                        res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+                        return [2 /*return*/, res.status(200).json({ accessToken: accessToken, accessTokenExpiration: accessTokenExpiration })];
+                    case 3:
+                        error_4 = _b.sent();
+                        if (error_4 instanceof WebError) {
+                            return [2 /*return*/, ErrorsUtils.catchError(res, error_4)];
+                        }
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
-                catch (error) {
-                    if (error instanceof WebError) {
-                        return [2 /*return*/, ErrorsUtils.catchError(res, error)];
-                    }
-                }
-                return [2 /*return*/];
             });
         });
     };

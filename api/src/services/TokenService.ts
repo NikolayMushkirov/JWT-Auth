@@ -9,6 +9,7 @@ dotenv.config();
 
 interface CheckUserAccess extends Request {
   user: string | JwtPayload;
+  headers: {  authorization: string };
 }
 
 export class TokenService {
@@ -31,8 +32,8 @@ export class TokenService {
     return await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
   }
 
-  static async checkAccess(req: CheckUserAccess, _: undefined, next: NextFunction) {
-    const authHeader = req.headers.get("Authorization");
+  static async checkAccess(req: CheckUserAccess, _: null, next: NextFunction) {
+    const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")?.[1];
 
     if (!token) {

@@ -1,5 +1,6 @@
+import { JwtPayload } from "jsonwebtoken";
 import pool from "../db.js";
-import { ClientHashedData } from "../types/types.js";
+import { ClientData, ClientHashedData } from "../types/types.js";
 
 export class UserRepository {
   static async createUser({
@@ -13,7 +14,7 @@ export class UserRepository {
     );
     return response.rows[0];
   }
-  static async getUserData(userName: string) {
+  static async getUserData(userName: string | JwtPayload) {
     const response = await pool.query("SELECT * FROM users WHERE name=$1", [
       userName,
     ]);
