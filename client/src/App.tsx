@@ -6,17 +6,29 @@ import NavigationBar from "./components/NavigationBar";
 import Demo from "./pages/Demo";
 import { SnackbarProvider } from "notistack";
 
+import { AuthContext } from "./contexts/AuthContext";
+import { useContext } from "react";
+
 function App() {
+  const { isUserLogged } = useContext(AuthContext) as AuthContext;
   return (
-    <main className="h-dvh py-8 flex flex-col">
-      <SnackbarProvider/>
+    <main className="h-dvh py-8 flex flex-col items-center">
+      <SnackbarProvider />
       <BrowserRouter>
-        <NavigationBar />
+        <NavigationBar isUserLogged={isUserLogged} />
         <Routes>
-          <Route path="sign-in" element={<SignIn />} />
-          <Route path="sign-up" element={<SignUp />} />
-          <Route path="demo" element={<Demo />} />
-          <Route path="*" element={<Navigate to={"sign-in"} />} />
+          {isUserLogged ? (
+            <Route path="demo" element={<Demo />} />
+          ) : (
+            <>
+              <Route path="sign-in" element={<SignIn />} />
+              <Route path="sign-up" element={<SignUp />} />
+            </>
+          )}
+          <Route
+            path="*"
+            element={<Navigate to={isUserLogged ? "demo" : "sign-in"} />}
+          />
         </Routes>
       </BrowserRouter>
     </main>

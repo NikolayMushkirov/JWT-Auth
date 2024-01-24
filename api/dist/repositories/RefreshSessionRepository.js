@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import pool from "../db.js";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RefreshSessionRepository = void 0;
+var db_js_1 = __importDefault(require("../db.js"));
 var RefreshSessionRepository = /** @class */ (function () {
     function RefreshSessionRepository() {
     }
@@ -43,7 +49,7 @@ var RefreshSessionRepository = /** @class */ (function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, pool.query("SELECT * FROM refresh_sessions WHERE refresh_token=$1", [refreshToken])];
+                    case 0: return [4 /*yield*/, db_js_1.default.query("SELECT * FROM refresh_sessions WHERE refresh_token=$1", [refreshToken])];
                     case 1:
                         response = _a.sent();
                         if (!response.rows.length) {
@@ -59,7 +65,7 @@ var RefreshSessionRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, pool.query("INSERT INTO refresh_sessions (user_id, refresh_token, finger_print) VALUES ($1, $2, $3) RETURNING *", [id, refreshToken, fingerprint.hash])];
+                    case 0: return [4 /*yield*/, db_js_1.default.query("INSERT INTO refresh_sessions (user_id, refresh_token, finger_print) VALUES ($1, $2, $3) RETURNING *", [id, refreshToken, fingerprint === null || fingerprint === void 0 ? void 0 : fingerprint.hash])];
                     case 1:
                         _b.sent();
                         return [2 /*return*/];
@@ -71,7 +77,7 @@ var RefreshSessionRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, pool.query("DELETE FROM refresh_sessions WHERE refresh_token=$1", [
+                    case 0: return [4 /*yield*/, db_js_1.default.query("DELETE FROM refresh_sessions WHERE refresh_token=$1", [
                             refreshToken,
                         ])];
                     case 1:
@@ -83,4 +89,4 @@ var RefreshSessionRepository = /** @class */ (function () {
     };
     return RefreshSessionRepository;
 }());
-export { RefreshSessionRepository };
+exports.RefreshSessionRepository = RefreshSessionRepository;

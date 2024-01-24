@@ -1,16 +1,11 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { NextFunction } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 
 import * as dotenv from "dotenv";
 import { Forbidden, Unauthorized } from "../utils/Errors.js";
 
 dotenv.config();
-
-interface CheckUserAccess extends Request {
-  user: string | JwtPayload;
-  headers: {  authorization: string };
-}
 
 export class TokenService {
   static async generateAccessToken(payload: string | JwtPayload) {
@@ -32,20 +27,22 @@ export class TokenService {
     return await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
   }
 
-  static async checkAccess(req: CheckUserAccess, _: null, next: NextFunction) {
+  static async checkAccess(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")?.[1];
 
     if (!token) {
-      return next(new Unauthorized("Unauthorized"));
+      return next(new Unauthorized("Token not found"));
     }
 
     try {
-      req.user = await TokenService.verifyAccessToken(token);
-      console.log(req.user);
+      const user = await TokenService.verifyAccessToken(token);
+      console.log(user, "req user");
     } catch (error) {
-      console.log(error);
-      return next(new Forbidden("error Forbidden"));
+      if (error instanceof Error) {
+        console.log(error , 'Forbidden');
+        return next(new Forbidden(error));
+      }
     }
 
     next();

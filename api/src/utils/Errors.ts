@@ -9,44 +9,44 @@ export class ErrorsUtils {
 
 export class WebError {
   status: number;
-  error: string;
-  constructor(status: number, error: string) {
+  error: string | Error;
+  constructor(status: number, error: string | Error) {
     this.status = status;
     this.error = error;
   }
 }
 
 export class Unprocessable extends WebError {
-  constructor(error: string) {
-    super(422, error);
+  constructor(error: string | Error) {
+    super(422, error instanceof Error ? error.message : error);
   }
 }
 export class Conflict extends WebError {
-  constructor(error: string) {
-    super(409, error);
+  constructor(error: string | Error) {
+    super(409, error instanceof Error ? error.message : error);
   }
 }
 
 export class NotFound extends WebError {
-  constructor(error: string) {
-    super(404, error);
+  constructor(error: string | Error) {
+    super(404, error instanceof Error ? error.message : error);
   }
 }
 
 export class Forbidden extends WebError {
-  constructor(error: string) {
-    super(403, error);
+  constructor(error: string | Error) {
+    super(403, error instanceof Error ? error.message : error);
   }
 }
 
 export class Unauthorized extends WebError {
-  constructor(error: string) {
-    super(401, error);
+  constructor(error: string | Error) {
+    super(401, error instanceof Error ? error.message : error);
   }
 }
 
 export class BadRequest extends WebError {
-  constructor(error: string) {
-    super(400, error);
+  constructor(error: string | Error) {
+    super(400, error instanceof Error ? error.message : error);
   }
 }

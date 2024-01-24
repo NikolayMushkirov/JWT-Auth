@@ -64,6 +64,7 @@ function SignUp() {
         />
         <InputFIeld
           name="password"
+          type="password"
           placeholder="Пароль"
           register={register}
           error={Boolean(errors.password)}

@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,12 +35,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import bcrypt from "bcryptjs";
-import { UserRepository } from "../repositories/UserRepository.js";
-import { RefreshSessionRepository } from "../repositories/RefreshSessionRepository.js";
-import { TokenService } from "./TokenService.js";
-import { Conflict, Forbidden, NotFound, Unauthorized, } from "../utils/Errors.js";
-import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthService = void 0;
+var bcryptjs_1 = __importDefault(require("bcryptjs"));
+var UserRepository_js_1 = require("../repositories/UserRepository.js");
+var RefreshSessionRepository_js_1 = require("../repositories/RefreshSessionRepository.js");
+var TokenService_js_1 = require("./TokenService.js");
+var Errors_js_1 = require("../utils/Errors.js");
+var constants_js_1 = require("../constants.js");
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
@@ -49,24 +55,24 @@ var AuthService = /** @class */ (function () {
             var userData, isPasswordValid, payload, accessToken, refreshToken;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, UserRepository.getUserData(userName)];
+                    case 0: return [4 /*yield*/, UserRepository_js_1.UserRepository.getUserData(userName)];
                     case 1:
                         userData = _b.sent();
                         if (!userData) {
-                            throw new NotFound("Пользователь не найден");
+                            throw new Errors_js_1.NotFound("Пользователь не найден");
                         }
-                        isPasswordValid = bcrypt.compareSync(password, userData.password);
+                        isPasswordValid = bcryptjs_1.default.compareSync(password, userData.password);
                         if (!isPasswordValid) {
-                            throw new Forbidden("Неверное имя или пароль");
+                            throw new Errors_js_1.Forbidden("Неверное имя или пароль");
                         }
                         payload = { role: userData.role, id: userData.id, userName: userName };
-                        return [4 /*yield*/, TokenService.generateAccessToken(payload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateAccessToken(payload)];
                     case 2:
                         accessToken = _b.sent();
-                        return [4 /*yield*/, TokenService.generateRefreshToken(payload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateRefreshToken(payload)];
                     case 3:
                         refreshToken = _b.sent();
-                        return [4 /*yield*/, RefreshSessionRepository.createRefreshSession({
+                        return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.createRefreshSession({
                                 id: userData.id,
                                 refreshToken: refreshToken,
                                 fingerprint: fingerprint,
@@ -76,7 +82,7 @@ var AuthService = /** @class */ (function () {
                         return [2 /*return*/, {
                                 accessToken: accessToken,
                                 refreshToken: refreshToken,
-                                accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+                                accessTokenExpiration: constants_js_1.ACCESS_TOKEN_EXPIRATION,
                             }];
                 }
             });
@@ -88,14 +94,14 @@ var AuthService = /** @class */ (function () {
             var userData, hashedPassword, id, payload, accessToken, refreshToken;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, UserRepository.getUserData(userName)];
+                    case 0: return [4 /*yield*/, UserRepository_js_1.UserRepository.getUserData(userName)];
                     case 1:
                         userData = _b.sent();
                         if (userData) {
-                            throw new Conflict("Пользователь с таким именем уже существует");
+                            throw new Errors_js_1.Conflict("Пользователь с таким именем уже существует");
                         }
-                        hashedPassword = bcrypt.hashSync(password, 8);
-                        return [4 /*yield*/, UserRepository.createUser({
+                        hashedPassword = bcryptjs_1.default.hashSync(password, 8);
+                        return [4 /*yield*/, UserRepository_js_1.UserRepository.createUser({
                                 userName: userName,
                                 hashedPassword: hashedPassword,
                                 role: role,
@@ -103,13 +109,13 @@ var AuthService = /** @class */ (function () {
                     case 2:
                         id = (_b.sent()).id;
                         payload = { id: id, userName: userName, role: role };
-                        return [4 /*yield*/, TokenService.generateAccessToken(payload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateAccessToken(payload)];
                     case 3:
                         accessToken = _b.sent();
-                        return [4 /*yield*/, TokenService.generateRefreshToken(payload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateRefreshToken(payload)];
                     case 4:
                         refreshToken = _b.sent();
-                        return [4 /*yield*/, RefreshSessionRepository.createRefreshSession({
+                        return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.createRefreshSession({
                                 id: id,
                                 refreshToken: refreshToken,
                                 fingerprint: fingerprint,
@@ -119,7 +125,7 @@ var AuthService = /** @class */ (function () {
                         return [2 /*return*/, {
                                 accessToken: accessToken,
                                 refreshToken: refreshToken,
-                                accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+                                accessTokenExpiration: constants_js_1.ACCESS_TOKEN_EXPIRATION,
                             }];
                 }
             });
@@ -129,7 +135,7 @@ var AuthService = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, RefreshSessionRepository.deleteRefreshSession(refreshToken)];
+                    case 0: return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.deleteRefreshSession(refreshToken)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -145,43 +151,42 @@ var AuthService = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         if (!currentRefreshToken) {
-                            throw new Unauthorized("Unauthorized");
+                            throw new Errors_js_1.Unauthorized("Unauthorized");
                         }
-                        return [4 /*yield*/, RefreshSessionRepository.getRefreshSession(currentRefreshToken)];
+                        return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.getRefreshSession(currentRefreshToken)];
                     case 1:
                         refreshSession = _c.sent();
                         if (!refreshSession) {
-                            throw new Unauthorized("Unauthorized");
+                            throw new Errors_js_1.Unauthorized("Unauthorized");
                         }
-                        if (refreshSession.finger_print !== fingerprint.hash) {
+                        if (refreshSession.finger_print !== (fingerprint === null || fingerprint === void 0 ? void 0 : fingerprint.hash)) {
                             console.log("Попытка несанкционированного обновления токенов");
-                            throw new Forbidden("Forbidden");
+                            throw new Errors_js_1.Forbidden("Forbidden");
                         }
-                        return [4 /*yield*/, RefreshSessionRepository.deleteRefreshSession(currentRefreshToken)];
+                        return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.deleteRefreshSession(currentRefreshToken)];
                     case 2:
                         _c.sent();
                         _c.label = 3;
                     case 3:
                         _c.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, TokenService.verifyRefreshToken(currentRefreshToken)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.verifyRefreshToken(currentRefreshToken)];
                     case 4:
                         payload = _c.sent();
                         return [3 /*break*/, 6];
                     case 5:
                         error_1 = _c.sent();
-                        throw new Forbidden("Forbidden");
-                    case 6: return [4 /*yield*/, UserRepository.getUserData(payload.userName)];
+                        throw new Errors_js_1.Forbidden("Forbidden");
+                    case 6: return [4 /*yield*/, UserRepository_js_1.UserRepository.getUserData(payload)];
                     case 7:
                         _b = _c.sent(), id = _b.id, role = _b.role, userName = _b.name;
-                        console.log(payload, "payload");
                         actualPayload = { id: id, userName: userName, role: role };
-                        return [4 /*yield*/, TokenService.generateAccessToken(actualPayload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateAccessToken(actualPayload)];
                     case 8:
                         accessToken = _c.sent();
-                        return [4 /*yield*/, TokenService.generateRefreshToken(actualPayload)];
+                        return [4 /*yield*/, TokenService_js_1.TokenService.generateRefreshToken(actualPayload)];
                     case 9:
                         refreshToken = _c.sent();
-                        return [4 /*yield*/, RefreshSessionRepository.createRefreshSession({
+                        return [4 /*yield*/, RefreshSessionRepository_js_1.RefreshSessionRepository.createRefreshSession({
                                 id: id,
                                 refreshToken: refreshToken,
                                 fingerprint: fingerprint,
@@ -191,7 +196,7 @@ var AuthService = /** @class */ (function () {
                         return [2 /*return*/, {
                                 accessToken: accessToken,
                                 refreshToken: refreshToken,
-                                accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+                                accessTokenExpiration: constants_js_1.ACCESS_TOKEN_EXPIRATION,
                             }];
                 }
             });
@@ -199,4 +204,4 @@ var AuthService = /** @class */ (function () {
     };
     return AuthService;
 }());
-export { AuthService };
+exports.AuthService = AuthService;

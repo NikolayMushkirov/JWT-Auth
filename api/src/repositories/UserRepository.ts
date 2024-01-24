@@ -14,7 +14,12 @@ export class UserRepository {
     );
     return response.rows[0];
   }
-  static async getUserData(userName: string | JwtPayload) {
+  static async getUserData(payload: string | JwtPayload) {
+    let userName;
+    typeof payload === "string"
+      ? (userName = payload)
+      : (userName = payload.userName);
+
     const response = await pool.query("SELECT * FROM users WHERE name=$1", [
       userName,
     ]);

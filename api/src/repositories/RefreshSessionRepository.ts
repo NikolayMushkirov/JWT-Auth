@@ -4,7 +4,7 @@ import pool from "../db.js";
 type RefreshSession = {
   refreshToken: string;
   id?: number;
-  fingerprint: FingerprintResult;
+  fingerprint?: FingerprintResult;
 };
 
 export class RefreshSessionRepository {
@@ -27,7 +27,7 @@ export class RefreshSessionRepository {
   }: RefreshSession) {
     await pool.query(
       "INSERT INTO refresh_sessions (user_id, refresh_token, finger_print) VALUES ($1, $2, $3) RETURNING *",
-      [id, refreshToken, fingerprint.hash]
+      [id, refreshToken, fingerprint?.hash]
     );
   }
 

@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,6 +14,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BadRequest = exports.Unauthorized = exports.Forbidden = exports.NotFound = exports.Conflict = exports.Unprocessable = exports.WebError = exports.ErrorsUtils = void 0;
 var ErrorsUtils = /** @class */ (function () {
     function ErrorsUtils() {
     }
@@ -22,7 +25,7 @@ var ErrorsUtils = /** @class */ (function () {
     };
     return ErrorsUtils;
 }());
-export { ErrorsUtils };
+exports.ErrorsUtils = ErrorsUtils;
 var WebError = /** @class */ (function () {
     function WebError(status, error) {
         this.status = status;
@@ -30,52 +33,52 @@ var WebError = /** @class */ (function () {
     }
     return WebError;
 }());
-export { WebError };
+exports.WebError = WebError;
 var Unprocessable = /** @class */ (function (_super) {
     __extends(Unprocessable, _super);
     function Unprocessable(error) {
-        return _super.call(this, 422, error) || this;
+        return _super.call(this, 422, error instanceof Error ? error.message : error) || this;
     }
     return Unprocessable;
 }(WebError));
-export { Unprocessable };
+exports.Unprocessable = Unprocessable;
 var Conflict = /** @class */ (function (_super) {
     __extends(Conflict, _super);
     function Conflict(error) {
-        return _super.call(this, 409, error) || this;
+        return _super.call(this, 409, error instanceof Error ? error.message : error) || this;
     }
     return Conflict;
 }(WebError));
-export { Conflict };
+exports.Conflict = Conflict;
 var NotFound = /** @class */ (function (_super) {
     __extends(NotFound, _super);
     function NotFound(error) {
-        return _super.call(this, 404, error) || this;
+        return _super.call(this, 404, error instanceof Error ? error.message : error) || this;
     }
     return NotFound;
 }(WebError));
-export { NotFound };
+exports.NotFound = NotFound;
 var Forbidden = /** @class */ (function (_super) {
     __extends(Forbidden, _super);
     function Forbidden(error) {
-        return _super.call(this, 403, error) || this;
+        return _super.call(this, 403, error instanceof Error ? error.message : error) || this;
     }
     return Forbidden;
 }(WebError));
-export { Forbidden };
+exports.Forbidden = Forbidden;
 var Unauthorized = /** @class */ (function (_super) {
     __extends(Unauthorized, _super);
     function Unauthorized(error) {
-        return _super.call(this, 401, error) || this;
+        return _super.call(this, 401, error instanceof Error ? error.message : error) || this;
     }
     return Unauthorized;
 }(WebError));
-export { Unauthorized };
+exports.Unauthorized = Unauthorized;
 var BadRequest = /** @class */ (function (_super) {
     __extends(BadRequest, _super);
     function BadRequest(error) {
-        return _super.call(this, 400, error) || this;
+        return _super.call(this, 400, error instanceof Error ? error.message : error) || this;
     }
     return BadRequest;
 }(WebError));
-export { BadRequest };
+exports.BadRequest = BadRequest;

@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import pool from "../db.js";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRepository = void 0;
+var db_js_1 = __importDefault(require("../db.js"));
 var UserRepository = /** @class */ (function () {
     function UserRepository() {
     }
@@ -44,7 +50,7 @@ var UserRepository = /** @class */ (function () {
             var response;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, pool.query("INSERT INTO users (name, password, role) VALUES ($1, $2, $3) RETURNING *", [userName, hashedPassword, role])];
+                    case 0: return [4 /*yield*/, db_js_1.default.query("INSERT INTO users (name, password, role) VALUES ($1, $2, $3) RETURNING *", [userName, hashedPassword, role])];
                     case 1:
                         response = _b.sent();
                         return [2 /*return*/, response.rows[0]];
@@ -52,14 +58,18 @@ var UserRepository = /** @class */ (function () {
             });
         });
     };
-    UserRepository.getUserData = function (userName) {
+    UserRepository.getUserData = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
-            var response;
+            var userName, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, pool.query("SELECT * FROM users WHERE name=$1", [
-                            userName,
-                        ])];
+                    case 0:
+                        typeof payload === "string"
+                            ? (userName = payload)
+                            : (userName = payload.userName);
+                        return [4 /*yield*/, db_js_1.default.query("SELECT * FROM users WHERE name=$1", [
+                                userName,
+                            ])];
                     case 1:
                         response = _a.sent();
                         if (!response.rows.length) {
@@ -72,4 +82,4 @@ var UserRepository = /** @class */ (function () {
     };
     return UserRepository;
 }());
-export { UserRepository };
+exports.UserRepository = UserRepository;

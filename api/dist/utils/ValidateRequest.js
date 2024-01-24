@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,9 +35,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { ValidationError } from "yup";
-import { ErrorsUtils, Unprocessable } from "./Errors.js";
-export default (function (req, res, next, schema) { return __awaiter(void 0, void 0, void 0, function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var yup_1 = require("yup");
+var Errors_js_1 = require("./Errors.js");
+exports.default = (function (req, res, next, schema) { return __awaiter(void 0, void 0, void 0, function () {
     var error_1, path, errors;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -50,9 +52,9 @@ export default (function (req, res, next, schema) { return __awaiter(void 0, voi
             case 2: return [2 /*return*/, next()];
             case 3:
                 error_1 = _a.sent();
-                if (error_1 instanceof ValidationError) {
+                if (error_1 instanceof yup_1.ValidationError) {
                     path = error_1.path, errors = error_1.errors;
-                    return [2 /*return*/, ErrorsUtils.catchError(res, new Unprocessable(JSON.stringify({ path: path, errors: errors })))];
+                    return [2 /*return*/, Errors_js_1.ErrorsUtils.catchError(res, new Errors_js_1.Unprocessable(JSON.stringify({ path: path, errors: errors })))];
                 }
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];

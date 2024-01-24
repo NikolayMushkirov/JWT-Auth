@@ -16,7 +16,6 @@ import {
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 
 import { ClientData } from "../types/types.js";
-import { JwtPayload } from "jsonwebtoken";
 
 type AuthServiceData = ClientData & {
   id?: number;
@@ -104,7 +103,7 @@ export class AuthService {
     fingerprint,
     currentRefreshToken,
   }: {
-    fingerprint: FingerprintResult;
+    fingerprint?: FingerprintResult;
     currentRefreshToken: string;
   }) {
     if (!currentRefreshToken) {
@@ -119,7 +118,7 @@ export class AuthService {
       throw new Unauthorized("Unauthorized");
     }
 
-    if (refreshSession.finger_print !== fingerprint.hash) {
+    if (refreshSession.finger_print !== fingerprint?.hash) {
       console.log("Попытка несанкционированного обновления токенов");
       throw new Forbidden("Forbidden");
     }
@@ -138,12 +137,9 @@ export class AuthService {
       id,
       role,
       name: userName,
-    } = await UserRepository.getUserData(payload.userName);
-
-    console.log(payload , "payload");
+    } = await UserRepository.getUserData(payload);
 
     const actualPayload = { id, userName, role };
-
     const accessToken = await TokenService.generateAccessToken(actualPayload);
     const refreshToken = await TokenService.generateRefreshToken(actualPayload);
 

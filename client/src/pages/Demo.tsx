@@ -8,7 +8,7 @@ function Demo() {
   ) as AuthContext;
 
   return (
-    <div className=" h-full flex flex-col gap-4 justify-center items-center">
+    <div className="w-1/2 h-full flex flex-col gap-4 justify-center items-center">
       <p>{data}</p>
       <Button onClick={handleFetchProtected}>Запрос данных</Button>
       <Button onClick={handleLogout}>Выйти</Button>

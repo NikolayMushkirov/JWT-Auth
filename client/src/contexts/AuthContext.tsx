@@ -62,6 +62,7 @@ function AuthProvider({ children }: Props) {
       .then((res) => {
         const { accessToken, accessTokenExpiration } = res.data;
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
+        setIsUserLogged(true)
       })
       .catch(showErrorMessage);
   };
@@ -71,6 +72,7 @@ function AuthProvider({ children }: Props) {
       .then((res) => {
         const { accessToken, accessTokenExpiration } = res.data;
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
+        setIsUserLogged(true)
       })
       .catch(showErrorMessage);
   };

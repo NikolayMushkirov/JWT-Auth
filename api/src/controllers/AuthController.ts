@@ -13,6 +13,7 @@ export class AuthController {
     if (!fingerprint) {
       return res.status(400).json({ message: "Fingerprint not provided" });
     }
+
     try {
       const { accessToken, refreshToken, accessTokenExpiration } =
         await AuthService.signIn({
@@ -52,7 +53,6 @@ export class AuthController {
 
   static async logOut(req: Request, res: Response) {
     const refreshToken = req.cookies.refreshToken;
-    const { fingerprint } = req;
 
     try {
       await AuthService.logOut(refreshToken);
